@@ -1,15 +1,48 @@
-# Made by Evan Quan 10154242 Oct. 11, 2016
-# Converts input number of base 2-46 to output number of base 2-46.
+# Made by Evan Quan Oct. 11, 2016
+# Converts input number of base 2-36 to output number of base 2-36.
 # Gives a comprehensive explanation using Division Algorithm and Positional System.
 
-def converter():
-    global iNum,iNum_stored,iList,iBase,oBase,oList,total
-    IBASE_MIN = 2
-    IBASE_MAX = 46
-    OBASE_MIN = 2
-    OBASE_MAX = 46
-    print("\nBASE CONVERTER\n\nConvert a number from one base to another.\nWorks from base 2 up to base 46 (0-9,a-z,!-)).\n")
-    # Variables and Lists
+# Contants
+IBASE_MAX = 36
+OBASE_MIN = 2
+OBASE_MAX = IBASE_MAX
+
+# Main
+# Determines what other functions to call and when to call them.
+# Parameters: None
+# Return values: None
+def main():
+    # Minimum input base depends on the input number.
+    ibase_min = 2
+    print("\nBASE CONVERTER\n\nConvert a number from one base to another.\nWorks from base",OBASE_MIN,"up to base",OBASE_MAX,"(0-9,a-z).\n")
+    iNum, ibase_min, iNum_original, iList = iNumInput(ibase_min)
+    iBase = iBaseInput(iNum_original,ibase_min)
+    oBase = oBaseInput()
+    oList = [] # Needed to convert Base 10 to Base X
+    total = 0 # Sum total in Positional System
+    # Deciding what functions to use based on input
+    if iBase == 10:
+        if oBase != 10:
+            print()
+            convert10toX(iNum,iBase,oBase,oList,iNum_original)
+        else:
+            print(iNum_original,"is already base 10.")
+    elif iBase != oBase:
+        if oBase == 10:
+            iNum,oList,total,iList = convertXto10(iNum,iBase,iList,oList,total,iNum_original)
+            print("FINAL ANSWER:",iNum_original,"in base",iBase,"converted to base",oBase,"is",str(total) + ".")
+        else:
+            iNum,oList,total,iList = convertXto10(iNum,iBase,iList,oList,total,iNum_original)
+            convert10toX(iNum,iBase,oBase,oList,iNum_original)
+    else:
+        print(iNum_original,"is already base",str(iBase) + ".")
+    repeat()
+
+# Input iNum
+# Get input number from user and checks if number is valid
+# Parameters: ibase_min
+# Return values: iNum, ibase_min, iNum_original, iList
+def iNumInput(ibase_min):
     iNum_type_sorted = False
     while not iNum_type_sorted:
         iNum = input("Input number: ").lower() # Defaulted to string
@@ -21,88 +54,74 @@ def converter():
                 print("Input number cannot be a floating point.")
         except ValueError:
             iNum_type_sorted = True
-            if ")" in str(iNum):
-                IBASE_MIN = 46
-            elif "(" in str(iNum):
-                IBASE_MIN = 45
-            elif "*" in str(iNum):
-                IBASE_MIN = 44
-            elif "&" in str(iNum):
-                IBASE_MIN = 43
-            elif "^" in str(iNum):
-                IBASE_MIN = 42
-            elif "%" in str(iNum):
-                IBASE_MIN = 41
-            elif "$" in str(iNum):
-                IBASE_MIN = 40
-            elif "#" in str(iNum):
-                IBASE_MIN = 39
-            elif "@" in str(iNum):
-                IBASE_MIN = 38
-            elif "!" in str(iNum):
-                IBASE_MIN = 37
-            elif "z" in str(iNum):
-                IBASE_MIN = 36
+            if "z" in str(iNum):
+                ibase_min = 36
             elif "y" in str(iNum):
-                IBASE_MIN = 35
+                ibase_min = 35
             elif "x" in str(iNum):
-                IBASE_MIN = 34
+                ibase_min = 34
             elif "w" in str(iNum):
-                IBASE_MIN = 33
+                ibase_min = 33
             elif "v" in str(iNum):
-                IBASE_MIN = 32
+                ibase_min = 32
             elif "u" in str(iNum):
-                IBASE_MIN = 31
+                ibase_min = 31
             elif "t" in str(iNum):
-                IBASE_MIN = 30
+                ibase_min = 30
             elif "s" in str(iNum):
-                IBASE_MIN = 29
+                ibase_min = 29
             elif "r" in str(iNum):
-                IBASE_MIN = 28
+                ibase_min = 28
             elif "q" in str(iNum):
-                IBASE_MIN = 27
+                ibase_min = 27
             elif "p" in str(iNum):
-                IBASE_MIN = 26
+                ibase_min = 26
             elif "o" in str(iNum):
-                IBASE_MIN = 25
+                ibase_min = 25
             elif "n" in str(iNum):
-                IBASE_MIN = 24
+                ibase_min = 24
             elif "m" in str(iNum):
-                IBASE_MIN = 23
+                ibase_min = 23
             elif "l" in str(iNum):
-                IBASE_MIN = 22
+                ibase_min = 22
             elif "k" in str(iNum):
-                IBASE_MIN = 21
+                ibase_min = 21
             elif "j" in str(iNum):
-                IBASE_MIN = 20
+                ibase_min = 20
             elif "i" in str(iNum):
-                IBASE_MIN = 19
+                ibase_min = 19
             elif "h" in str(iNum):
-                IBASE_MIN = 18
+                ibase_min = 18
             elif "g" in str(iNum):
-                IBASE_MIN = 17
+                ibase_min = 17
             elif "f" in str(iNum):
-                IBASE_MIN = 16
+                ibase_min = 16
             elif "e" in str(iNum):
-                IBASE_MIN = 15
+                ibase_min = 15
             elif "d" in str(iNum):
-                IBASE_MIN = 14
+                ibase_min = 14
             elif "c" in str(iNum):
-                IBASE_MIN = 13
+                ibase_min = 13
             elif "b" in str(iNum):
-                IBASE_MIN = 12
+                ibase_min = 12
             elif "a" in str(iNum):
-                IBASE_MIN = 11
-            badCharacters = [",", "<", ".", ">", "/", "?", ";", ":", "\'", "\"", "[", "{", "]", "}", "\\", "|", "`", "~", "-", "_", "=", "+", " "]
-            for i in badCharacters:    
-                if i in iNum:
+                ibase_min = 11
+            for char in iNum:
+                if char not in ("1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"):
                     iNum_type_sorted = False
             if iNum == "":
                 iNum_type_sorted = False
             if iNum_type_sorted == False:
                 print("Invalid input.")
-    iNum_stored = iNum
+    iNum_original = iNum
     iList = list(str(iNum)) # Turns iNum into a list of strings if there are letters
+    return iNum, ibase_min, iNum_original, iList
+
+# Input Base
+# Get input base from user and checks if valid
+# Parameters: iNum_original,ibase_min
+# Return values: iBase
+def iBaseInput(iNum_original,ibase_min):
     iBase_is_int = False # Ensures and converts to int
     while not iBase_is_int:
         iBase = input("Input base: ").lower()
@@ -116,11 +135,18 @@ def converter():
             print("Input base must be an integer.")
         if iBase_is_int:
             if iBase > IBASE_MAX:
-                print("Maximum base for %s is %s." % (iNum_stored, IBASE_MAX))
+                print("Maximum base for %s is %s." % (iNum_original, IBASE_MAX))
                 iBase_is_int = False
-            elif iBase < IBASE_MIN:
-                print("Minimum base for %s is %s." % (iNum_stored, IBASE_MIN))
+            elif iBase < ibase_min:
+                print("Minimum base for %s is %s." % (iNum_original, ibase_min))
                 iBase_is_int = False
+    return iBase
+
+# Output Base
+# Get output base from user and checks if valid
+# Parameters: None
+# Return values: oBase
+def oBaseInput():
     oBase_is_int = False # Ensures and converts to int
     while not oBase_is_int:
         oBase = input("Output base: ")
@@ -139,43 +165,15 @@ def converter():
             elif oBase < OBASE_MIN:
                 print("Minimum base is %s." % OBASE_MIN)
                 oBase_is_int = False
-    oList = [] # Needed to convert Base 10 to Base X
-    total = 0 # Sum total in Positional System
-    # Deciding what functions to use based on input
-    if iBase == 10:
-        if oBase != 10:
-            print()
-            convert10toX()
-        else:
-            print(iNum_stored,"is already base 10.")
-        repeat()
-    # future goal to do binary to hex and hex to binary shortcut
-    # elif iBase == 2 and oBase == 16:
-    #     convert2to16()
-    # elif iBase == 16 and oBase == 2:
-    #     convert16to2()
-    elif iBase != oBase:
-        if oBase == 10:
-            print()
-            convertXto10()
-            print()
-            print("FINAL ANSWER:",iNum_stored,"in base",iBase,"converted to base",oBase,"is",str(total) + ".")
-        else:
-            print()
-            convertXto10()
-            print()
-            convert10toX()
-        repeat()
-    else:
-        print(iNum_stored,"is already base",str(iBase) + ".")
-        repeat()
-
+    return oBase
 
 # Division Algorithm
 # Converts Input Base 10 to Output Base 2-46
-def convert10toX():
-    global iNum,iBase,oBase,iList,oList,oStr
+# Parameters: iNum,iBase,oBase,iList,oList,iNum_original
+# Return values: None
+def convert10toX(iNum,iBase,oBase,oList,iNum_original):
     print("Apply Division Algorithm:\nInput number / Output base = Quotient (Q) : Remainder (R)")
+    iNum_stored = iNum
     while iNum > 0: # Doing the algorithm
         q = iNum // oBase
         r = iNum % oBase
@@ -235,38 +233,17 @@ def convert10toX():
             oList[n] = "y"
         elif e == 35:
             oList[n] = "z"
-        elif e == 36:
-            oList[n] = "!"
-        elif e == 37:
-            oList[n] = "@"
-        elif e == 38:
-            oList[n] = "#"
-        elif e == 39:
-            oList[n] = "$"
-        elif e == 40:
-            oList[n] = "%"
-        elif e == 41:
-            oList[n] = "^"
-        elif e == 42:
-            oList[n] = "&"
-        elif e == 43:
-            oList[n] = "*"
-        elif e == 44:
-            oList[n] = "("
-        elif e == 45:
-            oList[n] = ")"
-    oStr = ''.join(str(e) for e in oList)
-    iNum = oStr
-    print("Read the remainder (R) from bottom to top, converting numbers above 9 to their respective letters.")
-    print(iNum_stored,"in base",oBase,"is:",oStr) # Output iNum string
-    print()
-    print("FINAL ANSWER:",iNum_stored,"in base",iBase,"converted to base",oBase,"is",oStr + ".")
+    iNum = ''.join(str(e) for e in oList)
+    print("Read the remainder (R) from bottom to top, converting numbers above 9 to their respective letter values.\nEx. 10 = a, 11 = b, 12 = c etc.")
+    print(iNum_stored,"in base",oBase,"is",iNum + ".\n") # Output iNum string
+    print("FINAL ANSWER:",iNum_original,"in base",iBase,"converted to base",oBase,"is",iNum + ".")
 
 # Positional System
 # Converts Input Base 2-16 to Output Base 10
-def convertXto10(): 
-    global iNum,iBase,oBase,oList,oStr,total,iList
-    print("Apply Positional System:")
+# Parameters: iNum,iBase,iList,oList,total,iNum_original
+# Return values: iNum,oList,total,iList
+def convertXto10(iNum,iBase,iList,oList,total,iNum_original): 
+    print("\nApply Positional System:")
     n = len(str(iNum))
     iStr = ''.join(str(e) for e in iList)
     for n,e in enumerate(iList): # Converts letter elements to integers
@@ -351,13 +328,17 @@ def convertXto10():
         n -= 1
     iNum = int(total)
     print("Sum all products.")
-    print(iNum_stored,"in base 10 is:",total) # Output must be iNum integer for convert10toX
-
+    print(iNum_original,"in base 10 is",str(total) +".\n") # Output must be iNum integer for convert10toX
+    return iNum,oList,total,iList
+    
 # Repeat
+# Give user the choice to convert more numbers
+# Parameters: None
+# Return values: None
 def repeat():
     option = input("\nDo you want to convert another number?\n(Yes/No)\n-> ")
     if option in ("y","yes","yes.","yeah","yeah."):
-        converter()
+        main()
     elif option in ("n","no","no.","nope","nope."):
         print("Okay. Bye!")
     else:
@@ -365,4 +346,4 @@ def repeat():
         repeat()
         
 # Start the program
-converter()
+main()
